@@ -1,10 +1,11 @@
 import './App.css';
 import './Assests/fontAwesomeProIcons/fontAwesomeIcons.css';
+import Cart from './Components/Cart';
 
 function App() {
   return (
-    <div>
-      Our React App, is up and running!
+    <div >
+      <Cart/>
     </div>
 
   );

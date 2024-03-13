@@ -1,4 +1,4 @@
-# Module#5 React Day #6 Homework: e-Commerence cart WebApp
+# Module#5 React Day #6 Homework: e-Commerence Cart WebApp
 ![](thumbnail.png)
 
 ## Hosted Version of the Project:
