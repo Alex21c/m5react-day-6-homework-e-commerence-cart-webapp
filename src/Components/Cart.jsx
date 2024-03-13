@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CartItem from "./CartItem";
 
 export default function Cart(){
+
 // state for products
   let [stateProducts, updateStateProducts] = new useState([]);
 
@@ -16,7 +17,8 @@ export default function Cart(){
       console.error('ERROR: Unable to fetch products from the API!');  
     }
 
-    }
+  };
+
 // using useEffect hook to perform async operation
   useEffect(()=>{
     fetchProducts();
