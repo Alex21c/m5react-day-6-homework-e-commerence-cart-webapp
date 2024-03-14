@@ -1,30 +1,61 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import CartItem from "./CartItem";
 
 export default function Cart(){
 
-// state for products
-  let [stateProducts, updateStateProducts] = new useState([]);
 
-// i want to fetch products from API
-  let fetchProducts = async ()=>{
-    try {
-      let apiURL = "https://dummyjson.com/products/category/fragrances";
-      let response = await fetch(apiURL);
-      let responseJson = await response.json();
-      updateStateProducts(responseJson.products)
-    } catch (error) {
-      console.error('ERROR: Unable to fetch products from the API!');  
+// fetching products from api
+  let reducer = (state, action)=>{
+    if(action.type === 'addProductToCart'){
+      console.log('i have received some data', action.payload.productData, 'state is ', state);
+      return {
+        ...state,
+        products : {    
+          ...state.products,            
+          [action.payload.productData.id] : action.payload.productData
+        },
+
+        
+        
+      }
     }
 
-  };
-
-// using useEffect hook to perform async operation
+    // default is do nothing
+      return state;
+  }
+  let [stateCart, dispatch] = new useReducer((reducer), {products:{}, cartTotal:0});
+// here i will make an api call
   useEffect(()=>{
-    fetchProducts();
-  }, []);
+    try {
+      let makeAPICall = async()=>{
+        let response = await fetch('https://dummyjson.com/products/category/fragrances');
+        let parsedResponse = await response.json();
+        // creating my own state out of fetched data
+        // console.log(parsedResponse);
+        parsedResponse.products.map(product=>{
+          let myCustomizedProductData = {
+            'productData' : {
+              id : product.id,
+              price: product.price,
+              quantity: 1,
+              title: product.title,
+              thumbnail: product.thumbnail
+            }
+          };
+          console.log(myCustomizedProductData);
+          // i will update my cart state
+          dispatch({type:'addProductToCart', payload:myCustomizedProductData});
+        });
+      };
+      makeAPICall();
 
-  // console.log(stateProducts);      
+      // console.log('here is our state cart: ',stateCart);
+
+    } catch (error) {
+      console.error('ERROR: Unable to fetch products from API !');
+    }
+  },[]);
+
 // Return JSX
   return(
     <div className="border-2 border-slate-200 p-[2rem] w-[50rem] mt-[2rem] m-auto rounded-md flex flex-col gap-[2rem] text-[1.2rem] text-slate-200">
@@ -39,7 +70,8 @@ export default function Cart(){
         <h2 className="smallCaps text-slate-50 text-[2rem] text-center">Yours Shopping Cart</h2>
         <div className="flex flex-col gap-[2rem]">
           {
-           stateProducts.map((product, idx)=>< CartItem key={idx} product={product} />) 
+          Object.entries(stateCart.products).map(([idx, product])=><CartItem key={idx} product={product}/>)
+
           }
         </div>
         <div className="border-t-2 border-yellow-100 p-[1rem] flex justify-between">
